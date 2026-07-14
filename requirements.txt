@@ -1,0 +1,15 @@
+africastalking==2.0.2
+aggdraw==1.4.1
+asgiref==3.11.1
+certifi==2026.6.17
+charset-normalizer==3.4.9
+Django==6.0.7
+idna==3.18
+python-dotenv==1.2.2
+PyYAML==6.0.3
+requests==2.34.2
+responses==0.26.2
+schema==0.7.8
+sqlparse==0.5.5
+tzdata==2026.3
+urllib3==2.7.0

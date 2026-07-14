@@ -1,0 +1,70 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Supplier
+from .forms import SupplierForm
+
+
+def supplier_list(request):
+    suppliers = Supplier.objects.all()
+
+    context = {
+        'suppliers': suppliers
+    }
+
+    return render(
+        request,
+        'suppliers/supplier_list.html',
+        context
+    )
+
+
+def add_supplier(request):
+
+    if request.method == "POST":
+        form = SupplierForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('supplier_list')
+
+    else:
+        form = SupplierForm()
+
+    return render(
+        request,
+        'suppliers/add_supplier.html',
+        {'form': form}
+    )
+
+
+def edit_supplier(request, pk):
+    supplier = get_object_or_404(Supplier, pk=pk)
+
+    if request.method == "POST":
+        form = SupplierForm(request.POST, instance=supplier)
+
+        if form.is_valid():
+            form.save()
+            return redirect('supplier_list')
+
+    else:
+        form = SupplierForm(instance=supplier)
+
+    return render(
+        request,
+        'suppliers/edit_supplier.html',
+        {'form': form}
+    )
+
+
+def delete_supplier(request, pk):
+    supplier = get_object_or_404(Supplier, pk=pk)
+
+    if request.method == "POST":
+        supplier.delete()
+        return redirect('supplier_list')
+
+    return render(
+        request,
+        'suppliers/delete_supplier.html',
+        {'supplier': supplier}
+    )

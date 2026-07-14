@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoices{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">Invoices</h1>
+
+<div class="card">
+
+    <div class="card-header d-flex justify-content-between align-items-center">
+
+        <strong>Invoice List</strong>
+
+        <a href="{% url 'create_invoice' %}" class="btn btn-primary">
+    + Create Invoice
+</a>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th>Invoice No</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                   <th>Actions</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+            {% for invoice in invoices %}
+
+                <tr>
+                    <td>{{ invoice.invoice_number }}</td>
+                    <td>{{ invoice.customer }}</td>
+                    <td>{{ invoice.created_at }}</td>
+
+                    <td>
+                        {% if invoice.paid %}
+                            Paid
+                        {% else %}
+                            Pending
+                        {% endif %}
+                    </td>
+                    <td>
+    <a href="{% url 'invoice_detail' invoice.id %}" class="btn btn-sm btn-primary">
+        👁 View
+    </a>
+</td>
+                    <td>
+    {{ invoice.total_amount }}
+</td>
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="4" class="text-center">
+                        No invoices available.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

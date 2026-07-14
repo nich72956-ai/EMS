@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">📊 Reports Dashboard</h2>
+
+<div class="row">
+
+    <div class="col-md-3">
+        <div class="card text-bg-primary mb-3">
+            <div class="card-body text-center">
+                <h6>Products</h6>
+                <h2>{{ total_products }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-info mb-3">
+            <div class="card-body text-center">
+                <h6>Customers</h6>
+                <h2>{{ total_customers }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-dark mb-3">
+            <div class="card-body text-center">
+                <h6>Suppliers</h6>
+                <h2>{{ total_suppliers }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-success mb-3">
+            <div class="card-body text-center">
+                <h6>Invoices</h6>
+                <h2>{{ total_invoices }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW CARD -->
+    <div class="col-md-3">
+        <div class="card text-bg-warning mb-3">
+            <div class="card-body text-center">
+                <h6>Total Revenue</h6>
+                <h2>KSh {{ total_revenue }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <strong>⚠️ Low Stock Products</strong>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered">
+
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for product in low_stock %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.quantity_in_stock }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">
+                        All products have sufficient stock.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

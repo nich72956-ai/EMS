@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Products</h2>
+
+        <a href="#" class="btn btn-primary">
+            Add Product
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Serial No.</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Buying Price</th>
+                        <th>Selling Price</th>
+                        <th>Stock</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.serial_number }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>Ksh {{ product.buying_price }}</td>
+                    <td>Ksh {{ product.selling_price }}</td>
+                    <td>{{ product.quantity_in_stock }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">
+                        No products available.
+                    </td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

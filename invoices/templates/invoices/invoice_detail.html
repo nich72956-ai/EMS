@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice Details{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">Invoice Details</h1>
+
+<div class="card">
+
+    <div class="card-header">
+        <strong>Invoice Number:</strong> {{ invoice.invoice_number }}
+    </div>
+
+    <div class="card-body">
+
+        <p>
+            <strong>Customer:</strong>
+            {{ invoice.customer.first_name }}
+            {{ invoice.customer.last_name }}
+        </p>
+
+        <p>
+            <strong>Date:</strong>
+            {{ invoice.created_at }}
+        </p>
+
+
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Serial Number</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+            {% for item in invoice.items.all %}
+
+                <tr>
+
+                    <td>
+                        {{ item.product.name }}
+                    </td>
+
+                    <td>
+                        {{ item.product.serial_number }}
+                    </td>
+
+                    <td>
+                        {{ item.quantity }}
+                    </td>
+
+                    <td>
+                        {{ item.price }}
+                    </td>
+
+                    <td>
+                        {{ item.total_price }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <h4 class="text-end">
+            Total:
+            {{ invoice.total_amount }}
+        </h4>
+
+
+        <a href="{% url 'invoice_list' %}" class="btn btn-secondary">
+    Back
+</a>
+
+<button onclick="window.print()" class="btn btn-primary">
+    🖨 Print Invoice
+</button>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

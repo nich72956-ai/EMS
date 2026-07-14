@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Invoice{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">Create Invoice</h1>
+
+<div class="card">
+
+    <div class="card-header">
+        Invoice Details
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Customer</label>
+
+                <select name="customer" class="form-control">
+
+                    {% for customer in customers %}
+
+                    <option value="{{ customer.id }}">
+                        {{ customer.first_name }} {{ customer.last_name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">Product</label>
+
+                <select name="product" class="form-control">
+
+                    {% for product in products %}
+
+                    <option value="{{ product.id }}">
+                        {{ product.name }} - {{ product.selling_price }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">Quantity</label>
+
+                <input 
+                    type="number"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    class="form-control"
+                >
+
+            </div>
+
+
+            <button class="btn btn-success">
+                Save Invoice
+            </button>
+
+            <a href="{% url 'invoice_list' %}" class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
