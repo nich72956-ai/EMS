@@ -4,6 +4,24 @@ from .models import Product
 from .forms import ProductForm
 
 
+def generate_sku():
+    """
+    Generate the next SKU in the format:
+    BUD000001
+    BUD000002
+    """
+    last_product = Product.objects.order_by("-id").first()
+
+    if not last_product or not last_product.sku:
+        return "BUD000001"
+
+    try:
+        last_number = int(last_product.sku.replace("BUD", ""))
+        return f"BUD{last_number + 1:06d}"
+    except ValueError:
+        return "BUD000001"
+
+
 def product_list(request):
     search = request.GET.get("search")
 
@@ -12,7 +30,7 @@ def product_list(request):
     if search:
         products = products.filter(name__icontains=search)
 
-    paginator = Paginator(products, 5)  # Show 5 products per page
+    paginator = Paginator(products, 5)
     page_number = request.GET.get("page")
     products = paginator.get_page(page_number)
 
@@ -23,9 +41,16 @@ def product_list(request):
 
 def add_product(request):
     if request.method == "POST":
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, request.FILES)
+
         if form.is_valid():
-            form.save()
+            product = form.save(commit=False)
+
+            if not product.sku:
+                product.sku = generate_sku()
+
+            product.save()
+
             return redirect("product_list")
     else:
         form = ProductForm()
@@ -39,7 +64,12 @@ def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
     if request.method == "POST":
-        form = ProductForm(request.POST, instance=product)
+        form = ProductForm(
+            request.POST,
+            request.FILES,
+            instance=product
+        )
+
         if form.is_valid():
             form.save()
             return redirect("product_list")

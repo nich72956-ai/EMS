@@ -3,6 +3,7 @@ from .models import Product
 
 
 class ProductForm(forms.ModelForm):
+
     class Meta:
         model = Product
         fields = [
@@ -33,12 +34,10 @@ class ProductForm(forms.ModelForm):
 
             "name": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Product name",
             }),
 
             "brand": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Brand",
             }),
 
             "category": forms.Select(attrs={
@@ -74,12 +73,12 @@ class ProductForm(forms.ModelForm):
         barcode = self.cleaned_data.get("barcode")
 
         if barcode:
-            exists = Product.objects.filter(barcode=barcode)
+            qs = Product.objects.filter(barcode=barcode)
 
             if self.instance.pk:
-                exists = exists.exclude(pk=self.instance.pk)
+                qs = qs.exclude(pk=self.instance.pk)
 
-            if exists.exists():
+            if qs.exists():
                 raise forms.ValidationError(
                     "This barcode already exists."
                 )
@@ -89,12 +88,12 @@ class ProductForm(forms.ModelForm):
     def clean_serial_number(self):
         serial = self.cleaned_data.get("serial_number")
 
-        exists = Product.objects.filter(serial_number=serial)
+        qs = Product.objects.filter(serial_number=serial)
 
         if self.instance.pk:
-            exists = exists.exclude(pk=self.instance.pk)
+            qs = qs.exclude(pk=self.instance.pk)
 
-        if exists.exists():
+        if qs.exists():
             raise forms.ValidationError(
                 "This serial number already exists."
             )
