@@ -3,23 +3,15 @@
 {% block title %}Add Product{% endblock %}
 
 {% block content %}
-
 <div class="container mt-4">
 
     <div class="card shadow">
 
-        <div class="card-header bg-success text-white">
+        <div class="card-header bg-primary text-white">
             <h3>Add Product</h3>
         </div>
 
         <div class="card-body">
-
-            {% if form.errors %}
-            <div class="alert alert-danger">
-                <strong>Please correct the errors below:</strong>
-                {{ form.errors }}
-            </div>
-            {% endif %}
 
             <form method="POST" enctype="multipart/form-data">
 
@@ -27,7 +19,7 @@
 
                 {{ form.as_p }}
 
-                <button type="submit" class="btn btn-success">
+                <button class="btn btn-success">
                     Save Product
                 </button>
 
@@ -42,5 +34,31 @@
     </div>
 
 </div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const barcode = document.getElementById("id_barcode");
+    const serial = document.getElementById("id_serial_number");
+    const name = document.getElementById("id_name");
+
+    if(barcode){
+        barcode.focus();
+
+        barcode.addEventListener("change", function(){
+            serial.focus();
+        });
+    }
+
+    if(serial){
+        serial.addEventListener("change", function(){
+            name.focus();
+        });
+    }
+
+});
+
+</script>
 
 {% endblock %}

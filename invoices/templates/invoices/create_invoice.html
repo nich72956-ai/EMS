@@ -6,46 +6,73 @@
 
 <h1 class="mb-4">Create Invoice</h1>
 
-<div class="card">
+<div class="card shadow">
 
-    <div class="card-header">
+    <div class="card-header bg-primary text-white">
         Invoice Details
     </div>
 
     <div class="card-body">
+
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
 
         <form method="POST">
 
             {% csrf_token %}
 
             <div class="mb-3">
-                <label class="form-label">Customer</label>
+                <label class="form-label"><strong>Customer</strong></label>
 
                 <select name="customer" class="form-control">
 
                     {% for customer in customers %}
-
-                    <option value="{{ customer.id }}">
-                        {{ customer.first_name }} {{ customer.last_name }}
-                    </option>
-
+                        <option value="{{ customer.id }}">
+                            {{ customer.first_name }} {{ customer.last_name }}
+                        </option>
                     {% endfor %}
 
                 </select>
 
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">
+                    <strong>Scan Barcode</strong>
+                </label>
+
+                <input
+                    type="text"
+                    id="barcode"
+                    class="form-control"
+                    placeholder="Scan barcode here..."
+                    autofocus
+                >
+            </div>
 
             <div class="mb-3">
 
-                <label class="form-label">Product</label>
+                <label class="form-label">
+                    <strong>Product</strong>
+                </label>
 
-                <select name="product" class="form-control">
+                <select
+                    id="product"
+                    name="product"
+                    class="form-control">
 
                     {% for product in products %}
 
-                    <option value="{{ product.id }}">
-                        {{ product.name }} - {{ product.selling_price }}
+                    <option
+                        value="{{ product.id }}"
+                        data-barcode="{{ product.barcode }}">
+
+                        {{ product.name }} -
+                        KSh {{ product.selling_price }}
+
                     </option>
 
                     {% endfor %}
@@ -54,12 +81,13 @@
 
             </div>
 
-
             <div class="mb-3">
 
-                <label class="form-label">Quantity</label>
+                <label class="form-label">
+                    <strong>Quantity</strong>
+                </label>
 
-                <input 
+                <input
                     type="number"
                     name="quantity"
                     value="1"
@@ -68,7 +96,6 @@
                 >
 
             </div>
-
 
             <button class="btn btn-success">
                 Save Invoice
@@ -83,5 +110,41 @@
     </div>
 
 </div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const barcode = document.getElementById("barcode");
+    const product = document.getElementById("product");
+
+    barcode.focus();
+
+    barcode.addEventListener("change", function(){
+
+        let code = barcode.value.trim();
+
+        for(let i=0;i<product.options.length;i++){
+
+            if(product.options[i].dataset.barcode === code){
+
+                product.selectedIndex = i;
+
+                document.querySelector("input[name='quantity']").focus();
+
+                return;
+            }
+
+        }
+
+        alert("Product not found.");
+
+        barcode.select();
+
+    });
+
+});
+
+</script>
 
 {% endblock %}
