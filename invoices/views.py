@@ -1,5 +1,7 @@
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseRedirect
+import urllib.parse
 
 from .services import send_invoice_sms
 from .whatsapp import send_invoice_whatsapp
@@ -115,3 +117,30 @@ def invoice_detail(request, pk):
             'invoice': invoice
         }
     )
+def send_whatsapp(request, pk):
+    invoice = get_object_or_404(Invoice, pk=pk)
+
+    customer = invoice.customer
+    phone = customer.phone.replace(" ", "").strip()
+
+    if phone.startswith("0"):
+        phone = "254" + phone[1:]
+    elif phone.startswith("+254"):
+        phone = phone[1:]
+
+    message = f"""
+Hello {customer.first_name},
+
+Thank you for shopping with BudTech Enterprise.
+
+Invoice No: {invoice.invoice_number}
+
+Your invoice has been created successfully.
+
+Thank you for your business.
+"""
+
+    url = f"https://wa.me/{phone}?text={urllib.parse.quote(message)}"
+
+    return HttpResponseRedirect(url)
+

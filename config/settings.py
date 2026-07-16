@@ -22,8 +22,11 @@ SECRET_KEY = 'django-insecure-bzjx5h#4l5+wh7em9^66(z&hmnu*4@4fy4vap3)4lkx9g1ar9m
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    "jacy.pythonanywhere.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 # Africa's Talking settings
 AT_USERNAME = os.getenv("AT_USERNAME")
@@ -33,6 +36,7 @@ AT_API_KEY = os.getenv("AT_API_KEY")
 # Applications
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -126,9 +130,55 @@ USE_TZ = True
 
 # Static files
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 
 # Default primary key
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",
+    "dark_mode_theme": "darkly",
+
+    "navbar_small_text": False,
+    "footer_small_text": False,
+
+    "body_small_text": False,
+
+    "brand_small_text": False,
+
+    "sidebar_small_text": False,
+    "sidebar_nav_small_text": False,
+
+    "button_classes": {
+        "primary": "btn btn-primary btn-lg",
+        "secondary": "btn btn-secondary btn-lg",
+        "info": "btn btn-info btn-lg",
+        "warning": "btn btn-warning btn-lg",
+        "danger": "btn btn-danger btn-lg",
+        "success": "btn btn-success btn-lg",
+    },
+
+    "actions_sticky_top": True,
+}
+JAZZMIN_SETTINGS = {
+    "show_ui_builder": True,
+
+    "icons": {
+        "products": "fas fa-box-open fa-lg",
+        "products.Product": "fas fa-box fa-lg",
+        "products.Category": "fas fa-tags fa-lg",
+
+        "customers": "fas fa-users fa-lg",
+        "customers.Customer": "fas fa-user-circle fa-lg",
+
+        "suppliers": "fas fa-truck fa-lg",
+
+        "purchases": "fas fa-shopping-cart fa-lg",
+
+        "invoices": "fas fa-file-invoice-dollar fa-lg",
+
+        "auth.User": "fas fa-user-shield fa-lg",
+    },
+}

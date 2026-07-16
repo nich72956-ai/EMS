@@ -1,0 +1,55 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-3">
+        <a href="/admin/products/product/" class="btn btn-primary btn-lg btn-block p-4">
+            📦 Products
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="/admin/customers/customer/" class="btn btn-success btn-lg btn-block p-4">
+            👥 Customers
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="/admin/invoices/invoice/" class="btn btn-warning btn-lg btn-block p-4">
+            🧾 Invoices
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="/admin/purchases/purchase/" class="btn btn-danger btn-lg btn-block p-4">
+            🛒 Purchases
+        </a>
+    </div>
+
+</div>
+
+<br>
+
+<div class="row">
+
+    <div class="col-md-3">
+        <a href="/admin/suppliers/supplier/" class="btn btn-info btn-lg btn-block p-4">
+            🚚 Suppliers
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="/admin/budtech/companyprofile/" class="btn btn-secondary btn-lg btn-block p-4">
+            🏢 Company
+        </a>
+    </div>
+
+</div>
+
+<hr>
+
+{{ block.super }}
+
+{% endblock %}

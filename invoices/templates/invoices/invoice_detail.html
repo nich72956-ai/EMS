@@ -1,96 +1,272 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
 
-{% block title %}Invoice Details{% endblock %}
+<title>Invoice {{ invoice.invoice_number }}</title>
 
-{% block content %}
+<style>
 
-<h1 class="mb-4">Invoice Details</h1>
+body {
+    font-family: "Courier New", monospace;
+    background: #f4f4f4;
+    padding: 30px;
+}
 
-<div class="card">
+.invoice {
+    background: white;
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+}
 
-    <div class="card-header">
-        <strong>Invoice Number:</strong> {{ invoice.invoice_number }}
-    </div>
+.center {
+    text-align: center;
+}
 
-    <div class="card-body">
+.line {
+    border-top: 1px dashed #000;
+    margin: 15px 0;
+}
 
-        <p>
-            <strong>Customer:</strong>
-            {{ invoice.customer.first_name }}
-            {{ invoice.customer.last_name }}
-        </p>
-
-        <p>
-            <strong>Date:</strong>
-            {{ invoice.created_at }}
-        </p>
-
-
-        <table class="table table-striped">
-
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Serial Number</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
+.section-title {
+    font-weight: bold;
+    margin-top: 15px;
+}
 
 
-            <tbody>
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-            {% for item in invoice.items.all %}
-
-                <tr>
-
-                    <td>
-                        {{ item.product.name }}
-                    </td>
-
-                    <td>
-                        {{ item.product.serial_number }}
-                    </td>
-
-                    <td>
-                        {{ item.quantity }}
-                    </td>
-
-                    <td>
-                        {{ item.price }}
-                    </td>
-
-                    <td>
-                        {{ item.total_price }}
-                    </td>
-
-                </tr>
-
-            {% endfor %}
-
-            </tbody>
-
-        </table>
+th, td {
+    padding: 8px;
+    text-align: left;
+}
 
 
-        <h4 class="text-end">
-            Total:
-            {{ invoice.total_amount }}
-        </h4>
+.total {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+}
 
 
-        <a href="{% url 'invoice_list' %}" class="btn btn-secondary">
-    Back
-</a>
+.footer {
+    text-align: center;
+    margin-top: 30px;
+}
+button {
+    background: #1e88e5;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
 
-<button onclick="window.print()" class="btn btn-primary">
-    🖨 Print Invoice
-</button>
-        </a>
+button:hover {
+    opacity: 0.8;
+}
 
-    </div>
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="invoice">
+
+
+<div class="center">
+
+<h2>BUDTECH ENTERPRISE</h2>
+
+<p>
+Enterprise Management System
+</p>
+
+<div class="line"></div>
+
+
+<h3>SALES INVOICE</h3>
 
 </div>
 
-{% endblock %}
+
+<p>
+<strong>Invoice No:</strong>
+{{ invoice.invoice_number }}
+<br>
+
+<strong>Date:</strong>
+{{ invoice.created_at|date:"d F Y" }}
+
+</p>
+
+
+<div class="line"></div>
+
+
+<h4>COMPANY DETAILS</h4>
+
+<p>
+BudTech Enterprise
+<br>
+Nairobi, Kenya
+<br>
+Phone: +254 XXX XXX XXX
+<br>
+Email: info@budtech.co.ke
+</p>
+
+
+<div class="line"></div>
+
+
+<h4>CUSTOMER DETAILS</h4>
+
+<p>
+
+Customer:
+{{ invoice.customer.first_name }}
+{{ invoice.customer.last_name }}
+
+<br>
+
+Phone:
+{{ invoice.customer.phone }}
+
+</p>
+
+
+<div class="line"></div>
+
+
+<h4>PURCHASE DETAILS</h4>
+
+
+<table>
+
+<tr>
+<th>Product</th>
+<th>Qty</th>
+<th>Unit Price</th>
+<th>Total</th>
+</tr>
+
+
+{% for item in invoice.items.all %}
+
+<tr>
+
+<td>
+{{ item.product.name }}
+</td>
+
+<td>
+{{ item.quantity }}
+</td>
+
+<td>
+KSh {{ item.price }}
+</td>
+
+<td>
+KSh {{ item.total_price }}
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+
+</table>
+
+
+<div class="line"></div>
+
+
+<div class="total">
+
+TOTAL AMOUNT:
+KSh {{ invoice.total_amount }}
+
+</div>
+
+
+<div class="line"></div>
+
+
+<h4>DESCRIPTION</h4>
+
+
+<p>
+
+Thank you,
+{{ invoice.customer.first_name }}
+{{ invoice.customer.last_name }},
+for purchasing from
+<strong>BudTech Enterprise</strong>.
+
+</p>
+
+
+<p>
+
+Your purchase has been successfully recorded under
+Invoice No.
+<strong>{{ invoice.invoice_number }}</strong>.
+
+</p>
+
+
+<p>
+
+We appreciate your business and look forward to serving you again.
+
+</p>
+
+
+<div class="line"></div>
+
+
+<div class="footer">
+
+Prepared by:
+<br>
+
+<strong>
+BudTech Enterprise Management System
+</strong>
+
+</div>
+<div class="footer">
+
+<button onclick="window.print()">
+🖨 Print Invoice
+</button>
+
+</div>
+<br><br>
+
+<a href="{% url 'send_whatsapp' invoice.id %}" target="_blank">
+
+<button>
+📱 Send via WhatsApp
+</button>
+
+</a>
+
+
+</div>
+
+
+</body>
+
+</html>
