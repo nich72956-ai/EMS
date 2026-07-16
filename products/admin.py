@@ -4,26 +4,38 @@ from .models import Category, Product
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ("name", "description")
+    search_fields = ("name",)
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
-        'serial_number',
-        'name',
-        'category',
-        'buying_price',
-        'selling_price',
-        'quantity_in_stock',
+        "barcode",
+        "serial_number",
+        "name",
+        "brand",
+        "category",
+        "unit",
+        "buying_price",
+        "selling_price",
+        "quantity_in_stock",
+        "reorder_level",
     )
 
     search_fields = (
-        'serial_number',
-        'barcode',
-        'name',
+        "barcode",
+        "serial_number",
+        "name",
+        "brand",
     )
 
     list_filter = (
-        'category',
+        "category",
+        "brand",
+        "unit",
     )
+
+    ordering = ("name",)
+
+    list_per_page = 20

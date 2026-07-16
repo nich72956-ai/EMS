@@ -3,27 +3,121 @@
 {% block title %}Add Product{% endblock %}
 
 {% block content %}
+
 <div class="container mt-4">
-    <div class="card shadow">
-        <div class="card-header">
-            <h3>Add Product</h3>
+
+    <div class="card shadow-lg">
+
+        <div class="card-header bg-primary text-white">
+            <h3>📦 Add New Product</h3>
         </div>
 
         <div class="card-body">
-            <form method="post">
+
+            <form method="POST" enctype="multipart/form-data">
+
                 {% csrf_token %}
 
-                {{ form.as_p }}
+                <div class="row">
 
-                <button type="submit" class="btn btn-success">
-                    Save Product
+                    <div class="col-md-6 mb-3">
+                        <label>Barcode</label>
+                        {{ form.barcode }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Serial Number</label>
+                        {{ form.serial_number }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Product Name</label>
+                        {{ form.name }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Brand</label>
+                        {{ form.brand }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Category</label>
+                        {{ form.category }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Unit</label>
+                        {{ form.unit }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Buying Price</label>
+                        {{ form.buying_price }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Selling Price</label>
+                        {{ form.selling_price }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Quantity in Stock</label>
+                        {{ form.quantity_in_stock }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Reorder Level</label>
+                        {{ form.reorder_level }}
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label>Product Image</label>
+                        {{ form.image }}
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <button class="btn btn-success btn-lg">
+                    💾 Save Product
                 </button>
 
-                <a href="{% url 'product_list' %}" class="btn btn-secondary">
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-secondary btn-lg">
+
                     Cancel
+
                 </a>
+
             </form>
+
         </div>
+
     </div>
+
 </div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const barcode=document.getElementById("id_barcode");
+
+    const serial=document.getElementById("id_serial_number");
+
+    if(barcode){
+
+        barcode.addEventListener("change",function(){
+
+            serial.focus();
+
+        });
+
+    }
+
+});
+
+</script>
+
 {% endblock %}
