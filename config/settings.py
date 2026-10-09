@@ -16,17 +16,30 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load environment variables
 load_dotenv(BASE_DIR / ".env")
 
-
 # Security
-SECRET_KEY = 'django-insecure-bzjx5h#4l5+wh7em9^66(z&hmnu*4@4fy4vap3)4lkx9g1ar9m'
+DEVELOPMENT_SECRET_KEY = (
+    "django-insecure-local-development-only-change-before-deployment"
+)
 
-DEBUG = True
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", DEVELOPMENT_SECRET_KEY)
+
+DEBUG = os.getenv("DJANGO_DEBUG", "True").strip().lower() in {
+    "1", "true", "yes", "on"
+}
 
 ALLOWED_HOSTS = [
-    "jacy.pythonanywhere.com",
-    "localhost",
-    "127.0.0.1",
+    host.strip()
+    for host in os.getenv(
+        "DJANGO_ALLOWED_HOSTS",
+        "jacy.pythonanywhere.com,localhost,127.0.0.1",
+    ).split(",")
+    if host.strip()
 ]
+
+if not DEBUG and SECRET_KEY == DEVELOPMENT_SECRET_KEY:
+    raise ValueError(
+        "Set DJANGO_SECRET_KEY to a private production secret key."
+    )
 
 # Africa's Talking settings
 AT_USERNAME = os.getenv("AT_USERNAME")
@@ -137,6 +150,9 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = BASE_DIR / 'staticfiles' 
+# Uploaded media files, including product images
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 JAZZMIN_UI_TWEAKS = {
     "theme": "flatly",
     "dark_mode_theme": "darkly",

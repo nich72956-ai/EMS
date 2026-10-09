@@ -1,0 +1,55 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Delete Supplier | BudTech EMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Delete Supplier</h2>
+        </div>
+
+        <div class="card-body">
+            {% if error_message %}
+                <div class="alert alert-danger">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+
+            <p>
+                Supplier:
+                <strong>{{ supplier.company_name }}</strong>
+            </p>
+
+            <p>
+                Supplier Code:
+                <strong>{{ supplier.supplier_code }}</strong>
+            </p>
+
+            {% if has_purchases %}
+                <div class="alert alert-warning">
+                    This supplier has linked purchase records.
+                    Deletion is disabled to protect your purchase history.
+                </div>
+            {% else %}
+                <p>
+                    Are you sure you want to delete this supplier?
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        Confirm Delete
+                    </button>
+                </form>
+            {% endif %}
+
+            <a href="{% url 'supplier_list' %}"
+               class="btn btn-secondary mt-3">
+                Back to Suppliers
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

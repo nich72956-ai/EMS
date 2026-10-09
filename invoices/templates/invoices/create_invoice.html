@@ -1,150 +1,291 @@
+
 {% extends 'base.html' %}
 
-{% block title %}Create Invoice{% endblock %}
+{% block title %}Create Invoice | BudTech EMS{% endblock %}
 
 {% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Create Sales Invoice</h2>
+            <p class="text-muted mb-0">
+                Add multiple products to a single invoice.
+            </p>
+        </div>
 
-<h1 class="mb-4">Create Invoice</h1>
-
-<div class="card shadow">
-
-    <div class="card-header bg-primary text-white">
-        Invoice Details
+        <a href="{% url 'invoice_list' %}" class="btn btn-secondary">
+            Back to Invoices
+        </a>
     </div>
 
-    <div class="card-body">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            Invoice Details
+        </div>
 
-        {% if error %}
-            <div class="alert alert-danger">
-                {{ error }}
-            </div>
-        {% endif %}
+        <div class="card-body">
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
 
-        <form method="POST">
+            <form method="post" id="invoice-form">
+                {% csrf_token %}
 
-            {% csrf_token %}
+                <div class="mb-4">
+                    <label for="customer" class="form-label">
+                        <strong>Customer</strong>
+                    </label>
 
-            <div class="mb-3">
-                <label class="form-label"><strong>Customer</strong></label>
+                    <select
+                        name="customer"
+                        id="customer"
+                        class="form-select"
+                        required>
+                        <option value="">Select a customer</option>
 
-                <select name="customer" class="form-control">
+                        {% for customer in customers %}
+                            <option value="{{ customer.id }}">
+                                {{ customer.customer_code }} -
+                                {{ customer.first_name }} {{ customer.last_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                    {% for customer in customers %}
-                        <option value="{{ customer.id }}">
-                            {{ customer.first_name }} {{ customer.last_name }}
-                        </option>
-                    {% endfor %}
+                <h5 class="mb-3">Invoice Items</h5>
 
-                </select>
+                <div id="product-rows">
+                    <div class="product-row border rounded p-3 mb-3">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label">Scan Barcode</label>
+                                <input
+                                    type="text"
+                                    class="form-control barcode-input"
+                                    placeholder="Scan barcode..."
+                                    autocomplete="off">
+                            </div>
 
-            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Product</label>
+                                <select
+                                    name="product"
+                                    class="form-select product-select"
+                                    required>
+                                    <option value="">Select a product</option>
 
-            <div class="mb-3">
-                <label class="form-label">
-                    <strong>Scan Barcode</strong>
-                </label>
+                                    {% for product in products %}
+                                        <option
+                                            value="{{ product.id }}"
+                                            data-barcode="{{ product.barcode|default:'' }}"
+                                            data-price="{{ product.selling_price }}"
+                                            data-stock="{{ product.quantity_in_stock }}">
+                                            {{ product.name }} —
+                                            KSh {{ product.selling_price }} —
+                                            Stock: {{ product.quantity_in_stock }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                <input
-                    type="text"
-                    id="barcode"
-                    class="form-control"
-                    placeholder="Scan barcode here..."
-                    autofocus
-                >
-            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Quantity</label>
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    class="form-control quantity-input"
+                                    value="1"
+                                    min="1"
+                                    step="1"
+                                    required>
+                            </div>
 
-            <div class="mb-3">
+                            <div class="col-md-2">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger remove-row w-100">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
 
-                <label class="form-label">
-                    <strong>Product</strong>
-                </label>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <small class="text-muted line-total">
+                                    Select a product to see its line total.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <select
-                    id="product"
-                    name="product"
-                    class="form-control">
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <button
+                        type="button"
+                        id="add-product"
+                        class="btn btn-outline-primary">
+                        + Add Another Product
+                    </button>
 
-                    {% for product in products %}
+                    <div class="ms-auto fs-5 fw-bold">
+                        Estimated Total:
+                        <span id="invoice-total">KSh 0.00</span>
+                    </div>
+                </div>
 
-                    <option
-                        value="{{ product.id }}"
-                        data-barcode="{{ product.barcode }}">
+                <div class="alert alert-info">
+                    Stock is checked again on the server when you save.
+                    The estimated total is for guidance; product prices are
+                    taken from the database.
+                </div>
 
-                        {{ product.name }} -
-                        KSh {{ product.selling_price }}
+                <button type="submit" class="btn btn-success">
+                    Save Invoice
+                </button>
 
-                    </option>
-
-                    {% endfor %}
-
-                </select>
-
-            </div>
-
-            <div class="mb-3">
-
-                <label class="form-label">
-                    <strong>Quantity</strong>
-                </label>
-
-                <input
-                    type="number"
-                    name="quantity"
-                    value="1"
-                    min="1"
-                    class="form-control"
-                >
-
-            </div>
-
-            <button class="btn btn-success">
-                Save Invoice
-            </button>
-
-            <a href="{% url 'invoice_list' %}" class="btn btn-secondary">
-                Cancel
-            </a>
-
-        </form>
-
+                <a href="{% url 'invoice_list' %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+            </form>
+        </div>
     </div>
-
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const rowsContainer = document.getElementById("product-rows");
+    const addButton = document.getElementById("add-product");
+    const totalDisplay = document.getElementById("invoice-total");
+    const form = document.getElementById("invoice-form");
 
-document.addEventListener("DOMContentLoaded", function(){
+    function formatMoney(amount) {
+        return "KSh " + amount.toLocaleString("en-KE", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
 
-    const barcode = document.getElementById("barcode");
-    const product = document.getElementById("product");
+    function updateTotals() {
+        let invoiceTotal = 0;
 
-    barcode.focus();
+        rowsContainer.querySelectorAll(".product-row").forEach(function (row) {
+            const select = row.querySelector(".product-select");
+            const quantityInput = row.querySelector(".quantity-input");
+            const lineDisplay = row.querySelector(".line-total");
+            const option = select.options[select.selectedIndex];
 
-    barcode.addEventListener("change", function(){
-
-        let code = barcode.value.trim();
-
-        for(let i=0;i<product.options.length;i++){
-
-            if(product.options[i].dataset.barcode === code){
-
-                product.selectedIndex = i;
-
-                document.querySelector("input[name='quantity']").focus();
-
+            if (!option || !option.value) {
+                lineDisplay.textContent = "Select a product to see its line total.";
                 return;
             }
 
-        }
+            const price = Number(option.dataset.price || 0);
+            const quantity = Math.max(0, Number(quantityInput.value || 0));
+            const stock = Number(option.dataset.stock || 0);
+            const lineTotal = price * quantity;
 
-        alert("Product not found.");
+            invoiceTotal += lineTotal;
 
-        barcode.select();
+            lineDisplay.textContent =
+                "Unit price: " + formatMoney(price) +
+                " | Available stock: " + stock +
+                " | Line total: " + formatMoney(lineTotal);
+        });
 
+        totalDisplay.textContent = formatMoney(invoiceTotal);
+    }
+
+    function configureRow(row) {
+        const barcodeInput = row.querySelector(".barcode-input");
+        const productSelect = row.querySelector(".product-select");
+        const quantityInput = row.querySelector(".quantity-input");
+        const removeButton = row.querySelector(".remove-row");
+
+        barcodeInput.addEventListener("change", function () {
+            const code = barcodeInput.value.trim();
+            let found = false;
+
+            for (const option of productSelect.options) {
+                if (option.value && option.dataset.barcode === code) {
+                    productSelect.value = option.value;
+                    found = true;
+                    quantityInput.focus();
+                    break;
+                }
+            }
+
+            if (!found && code) {
+                alert("Product barcode not found. Please check the code.");
+                barcodeInput.select();
+            }
+
+            updateTotals();
+        });
+
+        productSelect.addEventListener("change", updateTotals);
+        quantityInput.addEventListener("input", updateTotals);
+
+        removeButton.addEventListener("click", function () {
+            const rows = rowsContainer.querySelectorAll(".product-row");
+
+            if (rows.length === 1) {
+                productSelect.value = "";
+                barcodeInput.value = "";
+                quantityInput.value = "1";
+            } else {
+                row.remove();
+            }
+
+            updateTotals();
+        });
+    }
+
+    addButton.addEventListener("click", function () {
+        const firstRow = rowsContainer.querySelector(".product-row");
+        const newRow = firstRow.cloneNode(true);
+
+        newRow.querySelector(".barcode-input").value = "";
+        newRow.querySelector(".product-select").selectedIndex = 0;
+        newRow.querySelector(".quantity-input").value = "1";
+
+        rowsContainer.appendChild(newRow);
+        configureRow(newRow);
+        updateTotals();
+        newRow.querySelector(".barcode-input").focus();
     });
 
+    rowsContainer.querySelectorAll(".product-row").forEach(configureRow);
+
+    form.addEventListener("submit", function (event) {
+        const rows = rowsContainer.querySelectorAll(".product-row");
+
+        for (const row of rows) {
+            const product = row.querySelector(".product-select");
+            const quantity = row.querySelector(".quantity-input");
+
+            if (!product.value) {
+                event.preventDefault();
+                alert("Please select a product for every row.");
+                product.focus();
+                return;
+            }
+
+            if (!Number.isInteger(Number(quantity.value)) ||
+                Number(quantity.value) < 1) {
+                event.preventDefault();
+                alert("Enter a whole-number quantity of at least 1.");
+                quantity.focus();
+                return;
+            }
+        }
+    });
+
+    updateTotals();
+
+    const barcode = document.querySelector(".barcode-input");
+    if (barcode) {
+        barcode.focus();
+    }
 });
-
 </script>
-
 {% endblock %}
